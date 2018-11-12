@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+    
+    <!-- Uncomment and add your base-package here:
+         <context:component-scan
+            base-package="org.springframework.samples.service"/>  -->
+            
+<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+<property name="driverClassName"><value>com.mysql.cj.jdbc.Driver</value></property>
+<property name="url" value="jdbc:mysql://localhost:3306/mvc?serverTimezone=UTC"/>
+<property name="username" value="root"/>
+<property name="password" value="SystemManager402"/>
+</bean>
+<!-- Factory Bean --><!--dataSource 를 사용하여 데이터베이스 커넥션을 추출하고, 종료할 수 있는 팩토리 객체 생성,mybatis 설정 및 실행할 쿼리문의 위치정보 지정 -->
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+<property name="dataSource" ref="dataSource"/>
+<property name="configLocation" value="classpath:spring/mybatisConfig.xml"/>
+<!-- ** mapper 폴더 안쪽 하위폴더 모두 사용 디렉토리 상관 x ex))mapper 안에 member 폴더도 뒤짐 *Mapper 앞에 어떤 이름이 오던지 뒤에 Mapper.xml 으로 끝나면 그 정보로 읽어들이겠다 -->
+<property name="mapperLocations" value="classpath:spring/mapper/**/*Mapper.xml" />
+
+</bean>
+<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+<constructor-arg index="0" ref="sqlSessionFactory"></constructor-arg>
+</bean>
+<bean id ="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+<property name="dataSource" ref="dataSource"/>
+</bean>
+<!--  트랜잭션 처리를 위한 어노테이션 사용선언
+	- 주의 사항
+	- 최상위 스프링 컨테이너에 선언할 시, 동작하지 않음
+	- 반드시 DispatcherServlet이 참조하는 xml 파일에 선언 (mvc-config.xml)
+<tx:annotation-driven transaction-manager="transactionManager"/>
+-->
+</beans>

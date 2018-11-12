@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- member 테이블 수행할 query 문 -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 속성은 현재 xml 파일을 나타내는 ID와 같은 정보 -->
+<mapper namespace="com.tje.model.MemberMapper">
+
+	<select id="count" resultType="java.lang.Integer">
+		select count(*) from member
+	</select>
+	<!-- resultType="com.tje.model.Member" 을 <configuration> <typeAliases> 별칭 
+		<typeAlias type="com.tje.model.Member" alias="member" /> </typeAliases> </configuration> 통해 resultType="member" 로 간소화-->
+						<!-- 이 쿼리의 수행문의 결과를 밑의 타입으로 바꿔 가져온다 -->
+	<select id="allRecord" resultType="member">
+		select * from member
+	</select>
+	
+	<!-- where id = ? 형태가 아니라 where id = #{id}  -->
+							<!-- 이 객체가 가지고있는 멤버필드중에 id값을 처리하겠다 -->
+	<select id="oneRecord" parameterType="member" resultType="member">
+		select * from member where id = #{id}
+	</select>
+	
+	<insert id="insert" parameterType="member">
+	insert into member values(#{id},#{pw},#{name})
+	</insert>
+	
+	<delete id="deleteOne" parameterType="member">
+	delete from member where id = #{id}
+	</delete>
+
+</mapper>
